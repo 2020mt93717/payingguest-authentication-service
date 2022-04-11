@@ -1,0 +1,26 @@
+#Server Settings
+server:
+  port: 8079
+
+jwt:
+  #secret
+  secret: secretkey
+  #3 minutes validity
+  token:
+    validity: 180000
+
+#Eureka Service Discovery Settings
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+    instance:
+      preferIpAddress: true
+
+spring:
+  # Application Name
+  application:
+    name: authentication-service
+  #ignore null fields in json
+  jackson:
+    default-property-inclusion: NON_NULL
