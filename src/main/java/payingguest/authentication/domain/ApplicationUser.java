@@ -24,6 +24,15 @@
 
 package payingguest.authentication.domain;
 
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +44,37 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode
-public class User {
-    String userName;
-    String passwordHash;
+@Entity
+@Table(name = "ApplicationUser")
+public class ApplicationUser {
+
+    @Id
+    @GeneratedValue
+    @SequenceGenerator(name = "ApplicationUser_generator", sequenceName = "ApplicationUser_Seq")
+    @Column(name = "UserId", nullable = false, precision = 18, unique = true)
+    private long userId;
+
+    @Column(name = "UserName", nullable = false, length = 256)
+    private String userName;
+
+    @Column(name = "PasswordHash", nullable = true, length = 256)
+    private String passwordHash;
+
+    @Column(name = "FirstName", nullable = false, length = 256)
+    private String firstName;
+
+    @Column(name = "LastName", nullable = false, length = 256)
+    private String lastName;
+
+    @Column(name = "CreatedBy", nullable = false)
+    private String createdBy;
+
+    @Column(name = "CreationDate", nullable = false)
+    private Date creationDate;
+
+    @Column(name = "LastUpdatedBy", nullable = false, length = 256)
+    private String lastUpdatedBy;
+
+    @Column(name = "LastUpdatedDate")
+    private Date lastUpdatedDate;
 }

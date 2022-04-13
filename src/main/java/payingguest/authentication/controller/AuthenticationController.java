@@ -33,7 +33,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import payingguest.authentication.domain.User;
+import payingguest.authentication.domain.ApplicationUser;
+import payingguest.authentication.domain.LoginResponse;
 import payingguest.authentication.service.AuthenticationService;
 
 @RestController
@@ -47,19 +48,29 @@ public class AuthenticationController {
             value = "/login",
             consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE },
             produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-    public ResponseEntity<String> login(@RequestBody User pUser) {
-        // Compare user and password hash in DB. If yes then generate token else respond with error
-        String token = mAuthenticationService.generateToken(pUser.getUserName());
-        return new ResponseEntity<>(token, HttpStatus.OK);
+    public ResponseEntity<LoginResponse> login(@RequestBody ApplicationUser pApplicationUser) {
+
+        boolean isValidUser = mAuthenticationService.validatePassword(pApplicationUser.getUserName(),
+                pApplicationUser.getPasswordHash());
+        if (isValidUser) {
+            String token = mAuthenticationService.generateToken(pApplicationUser.getUserName());
+            LoginResponse loginResponse = new LoginResponse();
+            loginResponse.setJwtToken(token);
+            return new ResponseEntity<>(loginResponse, HttpStatus.OK);
+        } else {
+            LoginResponse loginResponse = new LoginResponse();
+            loginResponse.setErrorMessage("Authentication Failed");
+            return new ResponseEntity<>(loginResponse, HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @PostMapping(
             value = "/register",
             consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE },
             produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-    public ResponseEntity<String> register(@RequestBody User pUser) {
-        // Persist user
+    public ResponseEntity<String> register(@RequestBody ApplicationUser pApplicationUser) {
 
+        mAuthenticationService.createUser(pApplicationUser);
         return new ResponseEntity<>("Registered", HttpStatus.OK);
     }
 

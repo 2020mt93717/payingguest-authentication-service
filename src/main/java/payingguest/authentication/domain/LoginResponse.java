@@ -21,16 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * **************************************************************************************/
+package payingguest.authentication.domain;
 
-package payingguest.authentication.service;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import payingguest.authentication.domain.ApplicationUser;
+@RequiredArgsConstructor
+@Setter
+@Getter
+@ToString
+@EqualsAndHashCode
+public class LoginResponse {
 
-public interface AuthenticationService {
-
-    String generateToken(String pUserName);
-
-    boolean validatePassword(String pUserName, String pPasswordHash);
-
-    void createUser(ApplicationUser pApplicationUser);
+    private String jwtToken;
+    private String errorMessage;
 }

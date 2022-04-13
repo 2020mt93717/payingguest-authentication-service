@@ -25,16 +25,22 @@
 package payingguest.authentication.service.impl;
 
 import java.util.Date;
+import java.util.Optional;
 
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import payingguest.authentication.domain.ApplicationUser;
+import payingguest.authentication.repository.UserRepository;
 import payingguest.authentication.service.AuthenticationService;
 
-@Component
+@Service
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Value("${jwt.secret}")
@@ -43,6 +49,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Value("${jwt.token.validity}")
     private long mTokenValidity;
 
+    @Autowired
+    private UserRepository mUserRepository;
+
+    @Autowired
+    public AuthenticationServiceImpl(UserRepository pUserRepository) {
+
+    }
+
+    @Override
     public String generateToken(String pUserName) {
         Claims myClaims = Jwts.claims().setSubject(pUserName).setId(pUserName);
         long myCurrentTimeMillis = System.currentTimeMillis();
@@ -52,4 +67,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .signWith(SignatureAlgorithm.HS512, mJwtSecret).compact();
     }
 
+    @Transactional
+    @Override
+    public boolean validatePassword(String pUserName, String pPasswordHash) {
+        Optional<ApplicationUser> myUserPossibility = mUserRepository.findByUserName(pUserName);
+        return myUserPossibility.isPresent() && pPasswordHash.equals(myUserPossibility.get().getPasswordHash());
+    }
+
+    @Transactional
+    @Override
+    public void createUser(ApplicationUser pApplicationUser) {
+        mUserRepository.save(pApplicationUser);
+    }
 }

@@ -2,6 +2,24 @@
 server:
   port: 8079
 
+spring:
+  ## Datasource Properties
+  datasource:
+    url: jdbc:mysql://localhost:3306/userdb
+    username: authuser
+    password: authpassword
+    ## Hibernate Properties
+    # The SQL dialect makes Hibernate generate better SQL for the chosen database
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+  # Application Name
+  application:
+    name: authentication-service
+
 jwt:
   #secret
   secret: secretkey
@@ -16,11 +34,3 @@ eureka:
       defaultZone: http://localhost:8761/eureka
     instance:
       preferIpAddress: true
-
-spring:
-  # Application Name
-  application:
-    name: authentication-service
-  #ignore null fields in json
-  jackson:
-    default-property-inclusion: NON_NULL

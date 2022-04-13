@@ -22,15 +22,16 @@
  * SOFTWARE.
  * **************************************************************************************/
 
-package payingguest.authentication.service;
+package payingguest.authentication.repository;
+
+import java.util.Optional;
+
+import org.springframework.data.repository.CrudRepository;
 
 import payingguest.authentication.domain.ApplicationUser;
 
-public interface AuthenticationService {
+public interface UserRepository extends CrudRepository<ApplicationUser, Long> {
 
-    String generateToken(String pUserName);
+    Optional<ApplicationUser> findByUserName(final String userName);
 
-    boolean validatePassword(String pUserName, String pPasswordHash);
-
-    void createUser(ApplicationUser pApplicationUser);
 }
