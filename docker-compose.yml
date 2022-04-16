@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  user-db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=userdb
+      - MYSQL_USER=authuser
+      - MYSQL_PASSWORD=authpassword
+    volumes:
+      - /var/lib/mysql_data:/var/lib/mysql
+    networks:
+      - auth-network
+
+  app:
+    image: payingguest-authentication-service:0.0.1-SNAPSHOT
+    restart: always
+    depends_on:
+      - user-db
+    ports:
+      - 8079:8079
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://user-db:3306/userdb
+      SPRING_DATASOURCE_USERNAME: authuser
+      SPRING_DATASOURCE_PASSWORD: authpassword
+      SPRING_CLOUD_SERVICE-REGISTRY_AUTO-REGISTERATION_ENABLED: false
+      EUREKA_CLIENT_ENABLED: false
+      EUREKA_CLIENT_SERVICEURL_REGISTERWITHEUREKA: false
+    networks:
+      - auth-network
+
+networks:
+  auth-network:
+    driver: bridge
